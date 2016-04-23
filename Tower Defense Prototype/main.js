@@ -108,6 +108,7 @@ Background.prototype.draw = function (ctx) {
                 ctx.fillRect(i * 100, j * 100, 100, 100);                
             }
 
+            //2 is a tower
             if (map[i][j] === 0 || map[i][j] === 2) {
                 ctx.drawImage(this.tile, i * 100, j * 100);
             }
@@ -138,6 +139,7 @@ Tower.prototype.constructor = Tower;
 Tower.prototype.update = function () { };
 
 Tower.prototype.draw = function (ctx) {
+    //draw the tower from the map
     for (var i = 0; i < NUM_BLOCK; i++) {
         for (var j = 0; j < NUM_BLOCK; j++) {
             if (map[i][j] === 2) {
@@ -186,7 +188,7 @@ function Monster(game, image) {
 
     //The coordination of the monster when they turn
     this.preY = 0;
-    this.preX = 0;
+    this.preX = 0;    
     
     Entity.call(this, game, 0, 100);
 }
@@ -197,8 +199,8 @@ Monster.prototype.constructor = Monster;
 
 Monster.prototype.update = function () {
     //current coordination of frame
-    var currentX = Math.floor(this.x / 100);
-    var currentY = Math.floor(this.y / 100);
+    var currentX = Math.floor(this.x / BLOCK_W);
+    var currentY = Math.floor(this.y / BLOCK_H);
 
     //console.log("Current X = " + this.x + " Current Y = " + this.y);
     //console.log("map[" + currentX + "][" + currentY +"]");
@@ -225,13 +227,18 @@ Monster.prototype.update = function () {
     }
 
     
-    if (this.left) {
-        if (currentX < 0) {
-            if (this.monsterLeft.isDone()) this.monsterLeft.elapsedTime = 0;
+   else if (this.left) {
+        if (currentX < 0) {     //Monsters are gone into dungeon on the left of canvas
+            if (this.monsterLeft.isDone()) {
+                this.monsterLeft.elapsedTime = 0;
+                this.monsterRight.elapsedTime = 0;
+                this.monsterUp.elapsedTime = 0;
+                this.monsterRight.elapsedTime = 0;                
+            }
             this.left = false;
         } else 
         if (currentX === 0 && currentY === 7) { //the finish line at map[0][7]
-            this.x -= this.game.clockTick * this.speed;
+            this.x -= this.game.clockTick * this.speed;            
         } else if (this.preX != currentX) {
             if (map[currentX][currentY - 1] === 1) { //ready to change direction from left to up
                 this.left = false;
@@ -253,7 +260,7 @@ Monster.prototype.update = function () {
         }
     }
 
-    if (this.up) {
+   else if (this.up) {
         if (this.preY !== currentY) {
                 if (map[currentX - 1][currentY] === 1) { //ready to change direction from up to left
                     if (this.y - (currentY * 100) < 1) {
@@ -279,7 +286,7 @@ Monster.prototype.update = function () {
         }
      } 
     
-    if (this.down) {
+  else  if (this.down) {
         if(this.preY !== currentY) {
             if (map[currentX - 1][currentY] === 1) { //ready to change direction from down to left
                 this.down = false;
@@ -295,7 +302,8 @@ Monster.prototype.update = function () {
         } else {
             this.y += this.game.clockTick * this.speed;
         }
-    }        
+  }
+    
     Entity.prototype.update.call(this);
 }
 
@@ -327,7 +335,7 @@ ASSET_MANAGER.queueDownload("./img/monster.png");
 ASSET_MANAGER.queueDownload("./img/grass.jpg");
 ASSET_MANAGER.queueDownload("./img/left_gate.png");
 ASSET_MANAGER.queueDownload("./img/tower.png");
-ASSET_MANAGER.queueDownload("./img/zero.png");
+
 
 
 ASSET_MANAGER.downloadAll(function () {
@@ -350,6 +358,7 @@ ASSET_MANAGER.downloadAll(function () {
     //Adding fix tower    
     gameEngine.addEntity(new Tower(gameEngine));
 
+    
     //Generate the monster every 500 miliseconds
     var generate = window.setInterval(spawn, 500);    
 
@@ -361,6 +370,24 @@ ASSET_MANAGER.downloadAll(function () {
         //Monster = 10
         if (monsterNum === 10) {
             window.clearInterval(generate);
+            lvl++;
         }
     }
+
+    //Respawn monster
+    var level = window.setInterval(repeatSpawn, 8000);
+    var lvl = 0;
+
+    function repeatSpawn() {
+        generate = window.setInterval(spawn, 500);
+        monsterNum = 0;       
+
+        if (lvl === 1) {
+            window.clearInterval(level);
+        }
+    }
+
+    
+
+    if (lvl === 2) window.clearTimeout(repeat);
 });

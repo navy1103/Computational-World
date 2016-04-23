@@ -126,7 +126,7 @@ GameEngine.prototype.update = function () {
     //Erase the grid from background
     if (this.click) {
         chooseTower = null;
-        map[this.row][this.col] = 2;
+        if (map[this.row][this.col] === 0)  map[this.row][this.col] = 2;
        // this.click = null;
     }
 }
