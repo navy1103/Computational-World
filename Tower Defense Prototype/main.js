@@ -1,9 +1,8 @@
-var ROAD = 1;
-var LAND = 0;
-var GUN = 2;
-var GRID_WIDTH = 100;
-var GRID_SIZE = 8;
-var towerChosen = null;
+var chooseTower = null;
+var NUM_BLOCK = 8;
+var BLOCK_W = 100;
+var BLOCK_H = 100;
+
 
 //Set up for animations object with / without frame that are reversed
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
@@ -23,13 +22,16 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
 Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
     var scaleBy = scaleBy || 1;
     this.elapsedTime += tick;
+    //Check is to continue draw image or not
     if (this.loop) {
         if (this.isDone()) {
             this.elapsedTime = 0;
         }
     } else if (this.isDone()) {
-        return;
+        return;     //'return' is the interrupting function
+                    //A function immediately stops at the point where return is called
     }
+
     var index = this.reverse ? this.frames - this.currentFrame() - 1 : this.currentFrame();
     var vindex = 0;
     if ((index + 1) * this.frameWidth + this.startX > this.spriteSheet.width) {
@@ -59,75 +61,72 @@ Animation.prototype.currentFrame = function () {
 Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
-/*
-function Background(game) {
-    
-    //Entity.call(this, game, 0, 0);
-}
-*/
+
+//Define Background Object
 function Background(game, tile, gate) {    
     this.tile = tile;
-    this.gate = gate;
+    this.gate = gate;        
 };
 
 Background.prototype = new Entity();
 Background.prototype.constructor = Background;
 
-Background.prototype.update = function () {}
-
-Background.prototype.drawGrid = function(ctx) {
-        for (var i = 0; i < GRID_SIZE; i++) {
+Background.prototype.drawGrid = function (ctx) {
+    for (var i = 1; i < NUM_BLOCK; i++) {        
+        for (var j = 1; j < NUM_BLOCK; j++) {
             ctx.beginPath();
-            ctx.moveTo(i * GRID_WIDTH, 0);
-            ctx.lineWidth = 2;
-            ctx.lineTo(i * GRID_WIDTH, i * GRID_WIDTH + GRID_WIDTH * GRID_SIZE);
+            ctx.moveTo(i * BLOCK_W, 0);
+            ctx.lineTo(i * BLOCK_W, NUM_BLOCK * BLOCK_H);
             ctx.stroke();
-            
+
             ctx.beginPath();
-            ctx.moveTo(0, i * GRID_WIDTH);
-            ctx.lineWidth = 2;
-            ctx.lineTo(GRID_WIDTH * GRID_SIZE, i * GRID_WIDTH);
+            ctx.moveTo(0, j * BLOCK_H);
+            ctx.lineTo(NUM_BLOCK * BLOCK_W, j * BLOCK_H);
             ctx.stroke();
         }
+    }
+
 }
 
+Background.prototype.update = function () {}
+
 //The fixed 2d array map
-var map = [[0, 1, 0, 0, 0, 0, 1, 0], 
-           [0, 1, 0, 0, 0, 0, 1, 0], 
-           [0, 1, 1, 1, 1, 0, 1, 0], 
-           [0, 0, 0, 0, 1, 0, 1, 0], 
-           [0, 0, 0, 0, 1, 0, 1, 0], 
-           [0, 1, 1, 1, 1, 0, 1, 0], 
-           [0, 1, 0, 0, 0, 0, 1, 0], 
-           [0, 1, 1, 1, 1, 1, 1, 0]];
+var map = [ [0, 1, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 1, 0]];
 
 Background.prototype.draw = function (ctx) {
     for (var i = 0; i < 8; i++) {
         for (var j = 0; j < 8; j++) {
             if (map[i][j] === 1) {
                 ctx.fillStyle = "SaddleBrown";
-                ctx.fillRect(i * 100, j * 100, 100, 100);   
-                ctx.stroke();
+                ctx.fillRect(i * 100, j * 100, 100, 100);                
             }
 
-            if (map[i][j] === 0) {
+            if (map[i][j] === 0 || map[i][j] === 2) {
                 ctx.drawImage(this.tile, i * 100, j * 100);
             }
 
             if (i === 0 && j === 6) ctx.drawImage(this.gate, i * 100, j * 100);
         }
     }
-    if (towerChosen) {
+
+    if (chooseTower) {
+        //console.log("Tower is chosen!");
         this.drawGrid(ctx);
     }
-    ctx.restore();
-    //Entity.prototype.draw.call(this);
 }
 
 
 //Set up for tower
 function Tower(game) {
-    this.tower = new Animation(ASSET_MANAGER.getAsset("./img/tower.png"), 0, 0, 100, 100, 1, 1, true, false);
+    this.tower = new Animation(ASSET_MANAGER.getAsset("./img/tower.png"), 0, 0, 100, 100, 1, 1, true, false); 
+
     this.x = 0;
     this.y = 0;
     this.game = game;
@@ -137,37 +136,36 @@ function Tower(game) {
 Tower.prototype = new Entity();
 Tower.prototype.constructor = Tower;
 Tower.prototype.update = function () { };
+
 Tower.prototype.draw = function (ctx) {
-    this.tower.drawFrame(this.game.clockTick, ctx, this.x + 300, this.y + 300);
-    //this.zero.drawFrame(this.game.clockTick, ctx, this.x + 20, this.y + 320);
-    
-    if (towerChosen) {
-        this.game.ctx.save();
-        this.ctx.globalAlpha = .5;
-        
-        var i = Math.floor(this.game.mouse.x / GRID_WIDTH);
-        var j = (Math.floor(this.game.mouse.y / GRID_WIDTH) + GRID_SIZE);
-        
-        if (i < 0 || i > GRID_SIZE - 1 || j < 0 || j > GRID_SIZE - 1) {
-            return;    
-        } 
-        
-        if (map[i][j] === LAND){ // 1
-            //this.ctx.globalAlpha = .5;
-            //this.tower.drawFrame(this.game.clockTick, ctx, i * GRID_WIDTH, j * GRID_WIDTH);
-            this.ctx.drawImage(ASSET_MANAGER.getAsset("./img/tower.png"),i * GRID_WIDTH, j * GRID_WIDTH, 100, 100);
-        } else { // 0 or 2          
-            
-            this.ctx.fillStyle = '#F44336';
-            this.ctx.fillRect(i * GRID_WIDTH, j * GRID_WIDTH, 100, 100);
+    for (var i = 0; i < NUM_BLOCK; i++) {
+        for (var j = 0; j < NUM_BLOCK; j++) {
+            if (map[i][j] === 2) {
+                this.tower.drawFrame(this.game.clockTick, ctx, i * BLOCK_W, j * BLOCK_H);                
+            }
         }
-        //this.game.ctx.stroke();
     }
-    
+
+    //draw the shadow of the towel
+    if (chooseTower) {
+        ctx.save();
+        ctx.globalAlpha = 0.5;
+
+        var x = this.game.row;
+        var y = this.game.col;
+
+        //console.log(this.game.mouse);
+
+        if (map[x][y] === 0) {
+            ctx.drawImage(ASSET_MANAGER.getAsset("./img/tower.png"), x * BLOCK_W, y * BLOCK_H, BLOCK_W, BLOCK_H);
+        } else {
+            this.ctx.fillStyle = '#F44336';
+            this.ctx.fillRect(x * BLOCK_W, y * BLOCK_H, BLOCK_W, BLOCK_H);
+        }
+    }
+
     Entity.prototype.draw.call(this);
 };
-
-var build_tower = false;
 
 //Set up for monster
 //Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse)
@@ -203,7 +201,7 @@ Monster.prototype.update = function () {
     var currentY = Math.floor(this.y / 100);
 
     //console.log("Current X = " + this.x + " Current Y = " + this.y);
-//    console.log("map[" + currentX + "][" + currentY +"]");
+    //console.log("map[" + currentX + "][" + currentY +"]");
 
     /*At the time monster wants to change its direction, we store the current position in variable preX or preY
     We use preX and preY variable to compare with the position after monster changed its direction to help 
@@ -316,8 +314,8 @@ Monster.prototype.draw = function (ctx) {
 
     if (this.down) {
         this.monsterDown.drawFrame(this.game.clockTick, ctx, this.x + 25, this.y + 25);
-    }    
-    
+    } 
+
     Entity.prototype.draw.call(this);
 }
 

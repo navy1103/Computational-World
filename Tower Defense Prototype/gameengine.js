@@ -1,5 +1,4 @@
 // This game shell was happily copied from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
-
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
@@ -11,15 +10,16 @@ window.requestAnimFrame = (function () {
             };
 })();
 
-
+//Define Timer object
 function Timer() {
     this.gameTime = 0;
     this.maxStep = 0.05;
     this.wallLastTimestamp = 0;
 }
 
+//Date.now() method returns the milliseconds elapsed since 1 January 1970 00:00:00 UTC up until now as a Number
 Timer.prototype.tick = function () {
-    var wallCurrent = Date.now();
+    var wallCurrent = Date.now();   
     var wallDelta = (wallCurrent - this.wallLastTimestamp) / 1000;
     this.wallLastTimestamp = wallCurrent;
 
@@ -28,6 +28,7 @@ Timer.prototype.tick = function () {
     return gameDelta;
 }
 
+//Define GameEngine Object
 function GameEngine() {
     this.entities = [];
     this.showOutlines = false;
@@ -61,35 +62,35 @@ GameEngine.prototype.startInput = function () {
     console.log('Starting input');
     var that = this;
 
+    //Get (x, y) at the current mouse position
     var getXandY = function (e) {
         var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
-        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().right;
-        
-        x = Math.floor(x);
-        y = Math.floor(y);
-        
-        return { x : x, y : y };
+        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
+
+        x = Math.floor(x / BLOCK_W);
+        y = Math.floor(y / BLOCK_H);
+
+        return { x: x, y: y };
     }
 
     this.ctx.canvas.addEventListener("mousemove", function (e) {
+        //console.log(getXandY(e));
         that.mouse = getXandY(e);
-//        console.log(e);
-        e.preventDefault();
-    }, false);
-    
-    this.ctx.canvas.addEventListener("click", function (e) {
-        that.click = getXandY(e);
-//        that.buildTower = true;
-//        that.buildX = Math.floor(that.click.x / 100) * 100;
-//        that.build = Math.floor(that.click.y / 100) * 100;
-        //console.log(e);
-        e.preventDefault();
+
+        that.row = getXandY(e).x;
+        that.col = getXandY(e).y;
     }, false);
 
-    
+    this.ctx.canvas.addEventListener("click", function (e) {
+        //console.log(getXandY(e));
+        that.click = getXandY(e);
+
+        that.row = getXandY(e).x;
+        that.col = getXandY(e).y;
+    }, false);
+
     console.log('Input started');
 }
-
 
 GameEngine.prototype.addEntity = function (entity) {
     console.log('added entity');
@@ -102,33 +103,6 @@ GameEngine.prototype.draw = function () {
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
-    
-    // draw tower box
-//    if (towerChosen) {
-//        //this.ctx.save();
-//        
-//        if (this.mouse) {           
-//            var i = Math.floor(this.mouse.x / GRID_WIDTH);
-//            var j = (Math.floor(this.mouse.y / GRID_WIDTH) + GRID_SIZE);
-//            if (i < 0 || i > GRID_SIZE - 1 || j < 0 || j > GRID_SIZE - 1) {
-//                return;    
-//            }            
-//            
-////            this.ctx.beginPath();
-////            this.ctx.fillRect(i * GRID_WIDTH, j * GRID_WIDTH, GRID_WIDTH, GRID_WIDTH);
-////            this.ctx.lineWidth=2;
-////            console.log("mapzzz @(" + i + ", " + j + ")");
-////            if (map[i][j] === LAND) {// 1                
-////                this.ctx.fillStyle= '#CCFF90';  //'green';                
-////            } else {// 0 or 2                
-////                this.ctx.fillStyle = '#EF5350';                
-////            }
-////            this.ctx.stroke();
-//            
-//            //this.mouse = null;
-//        }
-//    }   
-    
     this.ctx.restore();
 }
 
@@ -149,10 +123,11 @@ GameEngine.prototype.update = function () {
         }
     }
     
-  
+    //Erase the grid from background
     if (this.click) {
-        towerChosen = false;
-        this.click = null;
+        chooseTower = null;
+        map[this.row][this.col] = 2;
+       // this.click = null;
     }
 }
 
@@ -160,7 +135,7 @@ GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
-    //this.space = null;
+    this.click = null;
 }
 
 function Entity(game, x, y) {
