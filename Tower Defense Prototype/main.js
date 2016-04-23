@@ -146,7 +146,7 @@ Tower.prototype.draw = function (ctx) {
                 this.tower.drawFrame(this.game.clockTick, ctx, i * BLOCK_W, j * BLOCK_H);                
             }
         }
-    }
+    }    
 
     //draw the shadow of the towel
     if (chooseTower) {
@@ -156,7 +156,11 @@ Tower.prototype.draw = function (ctx) {
         var x = this.game.row;
         var y = this.game.col;
 
-        //console.log(this.game.mouse);
+        //check mouse out of bound
+        //if((x < 0) || (y < 0) || (x > 7) || (y > 7)) return;
+
+        if (((x || y) < 0) || ((x || y) > 7)) return;
+        //console.log(this.game.mouse);        
 
         if (map[x][y] === 0) {
             ctx.drawImage(ASSET_MANAGER.getAsset("./img/tower.png"), x * BLOCK_W, y * BLOCK_H, BLOCK_W, BLOCK_H);
