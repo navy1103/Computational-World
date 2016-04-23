@@ -141,19 +141,16 @@ Tower.prototype.draw = function (ctx) {
     this.tower.drawFrame(this.game.clockTick, ctx, this.x + 300, this.y + 300);
     //this.zero.drawFrame(this.game.clockTick, ctx, this.x + 20, this.y + 320);
     
-    if(towerChosen){
-        if (this.mouse) {           
-            var i = Math.floor(this.mouse.x / GRID_WIDTH);
-            var j = (Math.floor(this.mouse.y / GRID_WIDTH) + GRID_SIZE);
-            if (i < 0 || i > GRID_SIZE - 1 || j < 0 || j > GRID_SIZE - 1) {
-                return;    
-            } 
-        }
+    if (towerChosen) {
         this.game.ctx.save();
         this.ctx.globalAlpha = .5;
         
         var i = Math.floor(this.game.mouse.x / GRID_WIDTH);
         var j = (Math.floor(this.game.mouse.y / GRID_WIDTH) + GRID_SIZE);
+        
+        if (i < 0 || i > GRID_SIZE - 1 || j < 0 || j > GRID_SIZE - 1) {
+            return;    
+        } 
         
         if (map[i][j] === LAND){ // 1
             //this.ctx.globalAlpha = .5;
