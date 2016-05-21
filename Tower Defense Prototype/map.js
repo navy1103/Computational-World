@@ -1,8 +1,11 @@
 //Define Map Object
 function Map(game) {    
     this.game = game; 
-	this.tile = ASSET_MANAGER.getAsset("./img/grass.jpg"); //default tile
-	            
+	this.grassTile = ASSET_MANAGER.getAsset("./img/grasstile.jpg");
+	this.roadTile = ASSET_MANAGER.getAsset("./img/roadtile.jpg");
+
+	this.tree = new Animation(ASSET_MANAGER.getAsset("./img/tree.png"), 0, 0, 100, 100, 1, 1, true, false);
+
 	this.array = new Array([]);
 	this.startX = 0;
 	this.startY = 0;
@@ -36,10 +39,18 @@ Map.prototype.draw = function (ctx) {
     for (var x = 0; x < this.mapSize; x++) {
         for (var y = 0; y < this.mapSize; y++) {            
             if (this.array[y][x] === ROAD) { //road
-                ctx.fillStyle = "SaddleBrown";
-                ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);                
+                ctx.drawImage(this.roadTile, x * BLOCK_SIZE, y * BLOCK_SIZE);                         
             } else { //grass
-				ctx.drawImage(this.tile, x * BLOCK_SIZE, y * BLOCK_SIZE);           
+				ctx.drawImage(this.grassTile, x * BLOCK_SIZE, y * BLOCK_SIZE);           
+            }            
+        }
+    }
+
+    //draw the Tree and Rock from the map
+    for (var x = 0; x < this.game.map.mapSize; x++) {
+        for (var y = 0; y < this.game.map.mapSize; y++) {
+            if (this.game.map.array[y][x] === TREE) {
+                this.tree.drawFrame(this.game.clockTick, ctx, x * BLOCK_SIZE, y * BLOCK_SIZE);
             }            
         }
     }

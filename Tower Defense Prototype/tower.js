@@ -128,14 +128,14 @@ TowerBullet.prototype.update = function () {
     }
   
     for (var i = 0; i < this.game.entities.length; i++) {
-        var ent = this.game.entities[i];
-        if (ent.isEnemy() &&  Entity.prototype.collide.call(this, ent)) {
-            ent.health -= this.hit;
+        var entity = this.game.entities[i];
+        if (entity.isEnemy() &&  Entity.prototype.collide.call(this, entity)) {
+            entity.health -= this.hit;
             this.removeFromWorld = true;
-            if (ent.health <= 0) {
-                ent.removeFromWorld = true;
-                MONEY += 2;
-                document.getElementById("money").innerHTML = MONEY;
+            if (entity.health <= 0) {
+                entity.removeFromWorld = true;
+                MONEY += entity.worth;
+                document.getElementById("money").innerHTML = "Current Money: $" + MONEY;
             }
         }
     }

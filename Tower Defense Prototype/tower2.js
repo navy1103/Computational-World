@@ -13,7 +13,7 @@ function Tower2(game, x, y) {
     this.fireFrequency = 300; //every 300 turns, fires a Missile
     this.fireCounter = 130;
     this.range = 400;    
-    this.hit = 10; //default - can be upgraded
+    this.hit = 30; //default - can be upgraded
 
     this.tower = new Animation(ASSET_MANAGER.getAsset("./img/tower2.png"), 0, 0, 100, 100, 1, 1, true, false);
 }
@@ -26,9 +26,9 @@ Tower2.prototype.update = function () {
         var i = 0;
         var fired = false;
         while (i < this.game.entities.length && !fired) {
-            var ent = this.game.entities[i];
-            if (ent.isEnemy() && !ent.removeFromWorld && Entity.prototype.inRange.call(this, ent)) {
-                var missile = new Tower2Missile(this.game, this.x, this.y, this.hit, ent);
+            var entity = this.game.entities[i];
+            if (entity.isEnemy() && !entity.removeFromWorld && Entity.prototype.inRange.call(this, entity)) {
+                var missile = new Tower2Missile(this.game, this.x, this.y, this.hit, entity);
                 this.game.addTower(missile);
                 fired = true;
                 document.getElementById('missile_sound').play();
@@ -132,18 +132,18 @@ Tower2Missile.prototype.update = function () {
 
     //hit any enemy that collides with this missile 
     for (var i = 0; i < this.game.entities.length; i++) {
-        var ent = this.game.entities[i];
-        if (ent.isEnemy() && Entity.prototype.collide.call(this, ent)) {
-            ent.health -= this.hit;
+        var entity = this.game.entities[i];
+        if (entity.isEnemy() && Entity.prototype.collide.call(this, entity)) {
+            entity.health -= this.hit;
             this.targetHit = true;
             this.lastEnemyX = this.target.x;
             this.lastEnemyY = this.target.y;
             document.getElementById('grenade_explosion_sound').play();
             this.blowup.drawFrame(this.game.clockTick, this.game.ctx, this.x - this.dx, this.y - this.dy);            
-            if (ent.health <= 0) {
-                ent.removeFromWorld = true;
-                MONEY += 2;
-                document.getElementById("money").innerHTML = MONEY;
+            if (entity.health <= 0) {
+                entity.removeFromWorld = true;
+                MONEY += entity.worth;
+                document.getElementById("money").innerHTML = "Current Money: $" + MONEY;
             }
         }
     }
@@ -153,12 +153,12 @@ Tower2Missile.prototype.update = function () {
        var newTarget = null;
         var minDistance = 99999; //just make it is bigger than all posible distance.
         for (var i = 0; i < this.game.entities.length; i++) {
-            var ent = this.game.entities[i];
-            if (ent.isEnemy() && !ent.removeFromWorld) {
-                var d = Math.sqrt((this.x - ent.x) * (this.x - ent.x) + (this.y - ent.y) * (this.y - ent.y));
+            var entity = this.game.entities[i];
+            if (entity.isEnemy() && !entity.removeFromWorld) {
+                var d = Math.sqrt((this.x - entity.x) * (this.x - entity.x) + (this.y - entity.y) * (this.y - entity.y));
                 if (d < minDistance) {
                     minDistance = d;
-                    newTarget = ent;
+                    newTarget = entity;
                 }
             }
         }

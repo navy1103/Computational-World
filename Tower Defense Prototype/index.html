@@ -15,48 +15,78 @@
 	<script type="text/javascript" src="./monster.js"></script>
 	<script type="text/javascript" src="./gate.js"></script>
     <script type="text/javascript" src="./main.js"></script>
-</head>
-<body>
     <audio src="./sound/mp5_smg.mp3" id="mp5_smg_sound" preload="auto"></audio>
     <audio src="./sound/grenade_explosion.mp3" id="grenade_explosion_sound" preload="auto"></audio>
     <audio src="./sound/missile.mp3" id="missile_sound" preload="auto"></audio>
+    <audio src="./sound/gameover.wav" id="gameover" preload="auto"></audio>
+</head>
+<style>
+    #gameWorld {
+        float: left;
+        border: 1px;
+        solid brown; 
+        background: lightskyblue;
+    }
 
-    <div style="width:800px;height:20px;position:relative;">        
-        <div id="live" style="position:absolute; left:100px; width:100px;"></div>
-        <div style="position:absolute; left:200px; width:100px;">$ <span id="money"></span></div>
-    </div>
+    #information {
+        float: left;
+        margin: 50px;
+    }
 
-    <canvas id="gameWorld" tabindex="1" width="800" height="800" style="float: left; border: 1px solid brown; background: lightskyblue"></canvas>
+    #health {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    #health_label {
+        font-size: 1.5em;
+    }
+
+    #money {
+        font-size: 1.5em;
+    }
+
+</style>
+<body>
+    <canvas id="gameWorld" tabindex="1" width="800" height="800" ></canvas>
     
-    <div style="float: left; margin-left: 50px;">
-        <h4>TOWERS</h4>
-        <div>
-            <!--input type="button" onclick="towerChosen = true;" value="Tower 1" style = "width: 100px; height: 100px; font-size: 1.2em;" /-->
-             <div style="float: left;">
-                <input type="image" onclick="chooseTower = 1;" src="img/tower1.png" height="100" />
+    <div id="information">
+        <div id="health_label"><span>Gate's Health</span></div>
+        <progress id="health" value="100" max="100"></progress>
+
+        <div id="tower_section">
+            <div>
+                <span id="money">Current Gold: $</div>
             </div>
-            <div style="float: left;">
-                <h4>Bullet tower</h4>
-                Speed : 5/second <br />
-                Damage 1 <br />
-                Cost: $10
-            </div> 
-            
-        </div>
-        <div>
-            <!--input type="button" onclick="towerChosen = true;" value="Tower 1" style = "width: 100px; height: 100px; font-size: 1.2em;" /-->
-            <div style="float: left;">
-                <input type="image" onclick="chooseTower = 2;" src="img/tower2.png" height="100" />
+            <h4>TOWERS</h4>
+            <div>
+                <!--input type="button" onclick="towerChosen = true;" value="Tower 1" style = "width: 100px; height: 100px; font-size: 1.2em;" /-->
+                 <div style="float: left;">
+                    <input type="image" onclick="chooseTower = 1;" src="img/tower1.png" height="100" />
+                </div>
+                <div style="float: left;">
+                    <h4>Bullet tower</h4>
+                    Speed : 1 bullet / 0.2 second <br />
+                    Damage 1 <br />
+                    Low Accuracy <br />
+                    Cost: $10
+                </div> 
+                
             </div>
-            <div style="float: left;">
-                <h4>Missile tower</h4>
-                Speed : 1/5 seconds <br />
-                Damage 10 <br />
-                Cost: $20
-            </div>            
+            <div>
+                <!--input type="button" onclick="towerChosen = true;" value="Tower 1" style = "width: 100px; height: 100px; font-size: 1.2em;" /-->
+                <div style="float: left;">
+                    <input type="image" onclick="chooseTower = 2;" src="img/tower2.png" height="100" />
+                </div>
+                <div style="float: left;">
+                    <h4>Missile tower</h4>
+                    Speed : 1 bullet / 5 seconds <br />
+                    Damage 30 <br />
+                    High Accuracy <br />
+                    Cost: $20
+                </div>            
+            </div>
         </div>
     </div>
-    
-    
 </body>
 </html>

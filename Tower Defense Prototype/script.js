@@ -16,15 +16,24 @@ Script.prototype.loadStage = function () {
             // create the map
 			map.mapSize = 8;
 			map.tile = ASSET_MANAGER.getAsset("./img/grass.jpg"); 
-			map.array = [ //G=Grass, R=Road, S=Start point, E=end point, 
-			['G', 'S', 'G', 'G', 'G', 'G', 'G', 'G'],
-            ['G', 'R', 'G', 'G', 'G', 'G', 'G', 'G'],
-            ['G', 'R', 'R', 'R', 'R', 'R', 'R', 'G'],
-            ['G', 'G', 'G', 'G', 'G', 'G', 'R', 'G'],
-            ['G', 'R', 'R', 'R', 'R', 'G', 'R', 'G'],
-            ['G', 'R', 'G', 'G', 'R', 'G', 'R', 'G'],
-            ['G', 'R', 'G', 'G', 'R', 'G', 'R', 'G'],
-            ['G', 'E', 'G', 'G', 'R', 'R', 'R', 'G']];
+			// map.array = [ //G=Grass, R=Road, S=Start point, E=end point, 
+			// ['G', 'S', 'G', 'G', 'G', 'G', 'G', 'G'],
+   //          ['G', 'R', 'G', 'G', 'G', 'G', 'G', 'G'],
+   //          ['G', 'R', 'R', 'R', 'R', 'R', 'R', 'G'],
+   //          ['G', 'G', 'G', 'G', 'G', 'G', 'R', 'G'],
+   //          ['G', 'R', 'R', 'R', 'R', 'G', 'R', 'G'],
+   //          ['G', 'R', 'G', 'G', 'R', 'G', 'R', 'G'],
+   //          ['G', 'R', 'G', 'G', 'R', 'G', 'R', 'G'],
+   //          ['G', 'E', 'G', 'G', 'R', 'R', 'R', 'G']];
+   map.array = [ //G=Grass, R=Road, S=Start point, E=end point, P = tree, K = Rock 
+            ['K', 'S', 'K', 'K', 'G', 'G', 'G', 'K'],
+            ['G', 'R', 'K', 'R', 'R', 'R', 'R', 'G'],
+            ['G', 'R', 'G', 'R', 'G', 'G', 'R', 'G'],
+            ['G', 'R', 'G', 'R', 'G', 'G', 'R', 'G'],
+            ['G', 'R', 'G', 'R', 'G', 'K', 'R', 'G'],
+            ['G', 'R', 'R', 'R', 'G', 'K', 'R', 'G'],
+            ['K', 'G', 'G', 'G', 'G', 'G', 'R', 'G'],
+            ['K', 'E', 'R', 'R', 'R', 'R', 'R', 'K']];
 			map.startDirection = SOUTH;
 
 	        // create some towers for defending
@@ -68,5 +77,5 @@ Script.prototype.loadStage = function () {
 	this.game.timer = new Timer(); //reset game time to 0
 	this.game.gameWon = false;
 
-	document.getElementById("money").innerHTML = MONEY;
+	document.getElementById("money").innerHTML = "Current Money: $" + MONEY;
 };

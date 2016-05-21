@@ -16,10 +16,13 @@ var BLOCK_SIZE = 100;
 var GRASS = 'G';
 var ROAD = 'R';
 var TOWER = 'T';
+var TREE = 'K';
 
 var ENEMY_MONSTER = 1;
 
 var MONEY = 20; //default money
+var TOWER_ONE_COST = 10;
+var TOWER_TWO_COST = 20;
 
 function Entity(game) {
     this.game = game;

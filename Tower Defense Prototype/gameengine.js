@@ -57,6 +57,7 @@ function GameEngine() {
     this.row = 0; //for putting a tower onto the map
     this.col = 0; //for putting a tower onto the map
 
+    this.finishedRound = false;
     this.gameWon = false;
     this.gameover = false;
     this.gamePause = false;
@@ -163,14 +164,37 @@ GameEngine.prototype.draw = function () {
         this.entities[i].draw(this.ctx);
     }
 
+    // display game over
+    if (this.gameover) {
+        var context = this.ctx;
+        context.beginPath();
+        context.font = "bold 30px Arial";
+        context.fillStyle = "#FFFFFF";
+        context.fillText("Game Over", context.canvas.width / 2 - 50, context.canvas.height / 2 - 50);
+        context.closePath();
+    }
+
+    if (this.gameWon) {
+        var context = this.ctx;
+        context.beginPath();
+        context.font = "bold 30px Arial";
+        context.fillStyle = "#FFFFFF";
+        context.fillText("You Won! More maps will be added soon", context.canvas.width / 2 - 300, context.canvas.height / 2 - 50);
+        context.closePath();      
+    }
+
     this.ctx.restore();
 }
 
 GameEngine.prototype.update = function () {
     //count enemies
-    if (this.enemyList.length === 0 && this.entities.length === 2) {
+    // if (this.enemyList.length === 0 && this.entities.length === 2) {
+    //     this.gameWon = true;
+    //     console.log("Contratulation! You won this stage!");
+    // }
+    if (this.entities.length === 2 && this.finishedRound) {
         this.gameWon = true;
-        console.log("Contratulation! You won this stage!");
+        console.log("You won!");
     }
 
     //add a new enemy from the script based on time
@@ -225,11 +249,11 @@ GameEngine.prototype.update = function () {
             //this.map.array[this.row][this.col] = TOWER;
 
             if (chooseTower === 1) {
-                if (MONEY >= 10) {
+                if (MONEY >= TOWER_ONE_COST) {
                     this.map.array[this.col][this.row] = TOWER;
                     this.towers.push(new Tower(this, this.row * 100, this.col * 100));
-                    MONEY -= 10;
-                    document.getElementById("money").innerHTML = MONEY;
+                    MONEY -= TOWER_ONE_COST;
+                    document.getElementById("money").innerHTML = "Current Money: $" + MONEY;
                 }
                 //this.map.array[this.col][this.row] = TOWER;
                 //this.towers.push(new Tower(this, this.row * 100, this.col * 100));                
@@ -237,11 +261,11 @@ GameEngine.prototype.update = function () {
             }
 
             if (chooseTower === 2) {
-                if (MONEY >= 20) {
+                if (MONEY >= TOWER_TWO_COST) {
                     this.map.array[this.col][this.row] = TOWER;
                     this.towers.push(new Tower2(this, this.row * 100, this.col * 100));
-                    MONEY -= 20;
-                    document.getElementById("money").innerHTML = MONEY;
+                    MONEY -= TOWER_TWO_COST;
+                    document.getElementById("money").innerHTML = "Current Money: $" + MONEY;
                 }
 
                 //this.map.array[this.col][this.row] = TOWER;
@@ -255,9 +279,17 @@ GameEngine.prototype.update = function () {
 }
 
 GameEngine.prototype.loop = function () {
-    this.clockTick = this.timer.tick();
-    this.update();
-    this.draw();
-    this.click = null;
+    if (!this.gameover && !this.gameWon) {
+        this.clockTick = this.timer.tick();
+        this.update();
+        this.draw();
+        this.click = null;
+        console.log("entity length" + this.entities.length);
+        if (this.gameover) {
+            document.getElementById("gameover").play();
+        } else if (this.gameWon) {
+            // game won sound
+        }
+    }
 }
 
