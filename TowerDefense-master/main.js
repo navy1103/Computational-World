@@ -48,8 +48,8 @@ ASSET_MANAGER.downloadAll(function () {
 });
 
 function display_game() {
-    //document.getElementById("top_canvas").style.visibility = 'visible';
-    //document.getElementById("towers_section").style.visibility = 'visible';
+    document.getElementById("top_canvas").style.visibility = 'visible';
+    document.getElementById("towers_section").style.visibility = 'visible';
 }
 
 function mute() {
