@@ -3,7 +3,7 @@
 function Script(game, stage) {
     this.game = game;
 	this.currentStage = stage;
-	this.maxStage = 3; //<-- maximum stage
+	//this.maxStage = 3; //<-- maximum stage
 	this.loadStage();	
 };
 
@@ -78,12 +78,12 @@ Script.prototype.loadStage = function () {
 	        map.array = [ //G=Grass, R=Road, S=Start point, E=end point, P = tree, K = Rock 
              ['E', 'G', 'R', 'R', 'R', 'G', 'G', 'G'],
              ['R', 'G', 'R', 'G', 'R', 'R', 'R', 'G'],
-             ['R', 'G', 'R', 'G', 'G', 'G', 'R', 'R'],
-             ['R', 'R', 'R', 'G', 'G', 'G', 'G', 'R'],
+             ['R', 'R', 'R', 'G', 'G', 'G', 'R', 'R'],
+             ['G', 'G', 'R', 'G', 'G', 'G', 'G', 'R'],
              ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'R'],
              ['G', 'G', 'G', 'G', 'R', 'R', 'R', 'R'],
-             ['G', 'R', 'R', 'G', 'R', 'G', 'G', 'G'],
-             ['G', 'S', 'R', 'R', 'R', 'G', 'G', 'G']];
+             ['G', 'R', 'R', 'R', 'R', 'G', 'G', 'G'],
+             ['G', 'S', 'G', 'G', 'G', 'G', 'G', 'G']];
 	        map.startDirection = NORTH;
 
 	        // randomly generate trees
@@ -97,8 +97,8 @@ Script.prototype.loadStage = function () {
 
 	        map.array = [ //G=Grass, R=Road, S=Start point, E=end point, P = tree, K = Rock 
              ['R', 'R', 'R', 'R', 'G', 'G', 'G', 'G'],
-             ['R', 'G', 'G', 'R', 'G', 'G', 'G', 'G'],
              ['R', 'G', 'G', 'R', 'G', 'G', 'R', 'S'],
+             ['R', 'G', 'G', 'R', 'G', 'G', 'R', 'G'],
              ['R', 'G', 'R', 'R', 'G', 'G', 'R', 'G'],
              ['R', 'G', 'R', 'G', 'G', 'G', 'R', 'G'],
              ['R', 'G', 'R', 'G', 'R', 'R', 'R', 'G'],
@@ -129,7 +129,7 @@ Script.prototype.loadStage = function () {
 
 	this.game.map = map; //load map
 	this.game.gate = gate; //load gate
-	this.game.enemyList = enemyList; //load enemy list
+	//this.game.enemyList = enemyList; //load enemy list
 	this.game.timer = new Timer(); //reset game time to 0
 	//this.game.gameWon = false;
 

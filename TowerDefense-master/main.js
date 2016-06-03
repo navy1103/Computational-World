@@ -31,6 +31,8 @@ ASSET_MANAGER.queueDownload("./img/blowup.png");
 ASSET_MANAGER.queueDownload("./img/axe.png");
 ASSET_MANAGER.queueDownload("./img/coins.png");
 
+var gameEngine = null;
+
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
     var canvas = document.getElementById('gameWorld');
@@ -69,10 +71,8 @@ function unmute() {
     document.getElementById("bow").volume = .7;
     document.getElementById("win").volume = 1.0;
 }
-function level(num) {
-    display_game();
-    var canvas = document.getElementById('gameWorld');
-    var ctx = canvas.getContext('2d');
+function nextlevel(num) {
+    display_game();    
 
     console.log("current level " + num);
 
@@ -80,13 +80,20 @@ function level(num) {
     destroy = null;
     window.clearInterval(spawn);
 
-    gameEngine = new GameEngine();
+    
     var map = new Script(gameEngine, num);
 
     console.log("entity: " + gameEngine.entities.length);
     
-    gameEngine.gameStart = true;
+    gameEngine.gameStart = true;    
+   
+    gameEngine.entities = [];
+    gameEngine.enemyList = [];
+    gameEngine.towers = [];
+    gameEngine.gameWon = null;
+    gameEngine.gameover = null;
     gameEngine.level = num;
+    gameEngine.finishedRound = null;
 
     //to show the tower as begin
     gameEngine.addEntity(new Tower(gameEngine));
@@ -94,9 +101,9 @@ function level(num) {
     gameEngine.addEntity(new Tower3(gameEngine));
     gameEngine.addEntity(new Tools(gameEngine, ASSET_MANAGER.getAsset("./img/axe.png")));
     gameEngine.addEntity(new SellTower(gameEngine, ASSET_MANAGER.getAsset("./img/coins.png")));
+    
+    
 
-    gameEngine.init(ctx);
-    gameEngine.start();
     // each object is one wave, id: 1 - monster 1, 2 - monster 2, 3 - monster 3, 0 - no monster, -1 all waves ended
     var script = [];
 
@@ -195,107 +202,111 @@ function level(num) {
 
 var level_1 = [
        { id: 0, number: 5 },
-       { id: 1, number: 10 },
-       { id: 0, number: 15 },
-       { id: 1, number: 15 },
-       { id: 0, number: 15 },
-       { id: 1, number: 10 },
-       { id: 2, number: 5 },
-       { id: 0, number: 15 },
-       { id: 2, number: 15 },
-       { id: 0, number: 15 },
-       { id: 1, number: 10 },
-       { id: 2, number: 10 },
-       { id: 3, number: 5 },
-       { id: 4, number: 2 },
+       { id: 1, number: 2 },
+       //{ id: 1, number: 10 },
+       //{ id: 0, number: 15 },
+       //{ id: 1, number: 15 },
+       //{ id: 0, number: 15 },
+       //{ id: 1, number: 10 },
+       //{ id: 2, number: 5 },
+       //{ id: 0, number: 15 },
+       //{ id: 2, number: 15 },
+       //{ id: 0, number: 15 },
+       //{ id: 1, number: 10 },
+       //{ id: 2, number: 10 },
+       //{ id: 3, number: 5 },
+       //{ id: 4, number: 2 },
        { id: -1, number: 0 }
 ];
 
 var level_2 = [
         { id: 0, number: 5 },
-        { id: 1, number: 10 },
-        { id: 0, number: 15 },
-        { id: 1, number: 10 },        
-        { id: 2, number: 5 },
-        { id: 0, number: 15 },
-        { id: 2, number: 10 },
-        { id: 0, number: 15 },
-        { id: 2, number: 10 },
-        { id: 3, number: 5 },
-        { id: 0, number: 15 },
-        { id: 3, number: 10 },
-        { id: 4, number: 5 },
-        { id: 0, number: 15 },
-        { id: 4, number: 10 },
-        { id: 0, number: 15 },
-        { id: 1, number: 5 },
-        { id: 2, number: 5 },
-        { id: 3, number: 5 },
-        { id: 4, number: 5 },
-        { id: 5, number: 5 },
-        { id: 6, number: 2 },
+        { id: 1, number: 2 },
+        //{ id: 1, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 1, number: 10 },        
+        //{ id: 2, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 2, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 2, number: 10 },
+        //{ id: 3, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 3, number: 10 },
+        //{ id: 4, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 4, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 1, number: 5 },
+        //{ id: 2, number: 5 },
+        //{ id: 3, number: 5 },
+        //{ id: 4, number: 5 },
+        //{ id: 5, number: 5 },
+        //{ id: 6, number: 2 },
         { id: -1, number: 0 }
 ];
 
 var level_3 = [
         { id: 0, number: 5 },
-        { id: 1, number: 15 },
-        { id: 0, number: 15 },
-        { id: 1, number: 7 },
-        { id: 2, number: 5 },
-        { id: 0, number: 15 },
-        { id: 2, number: 10 },
-        { id: 0, number: 15 },
-        { id: 2, number: 7 },
-        { id: 3, number: 5 },
-        { id: 0, number: 15 },
-        { id: 3, number: 10 },
-        { id: 0, number: 15 },
-        { id: 3, number: 7 },
-        { id: 4, number: 5 },
-        { id: 0, number: 15 },
-        { id: 4, number: 10 },
-        { id: 0, number: 15 },
-        { id: 4, number: 5 },
-        { id: 5, number: 5 },
-        { id: 0, number: 15 },
-        { id: 5, number: 5 },
-        { id: 6, number: 5 },
-        { id: 7, number: 3 },
+        { id: 1, number: 2 },
+        //{ id: 1, number: 15 },
+        //{ id: 0, number: 15 },
+        //{ id: 1, number: 7 },
+        //{ id: 2, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 2, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 2, number: 7 },
+        //{ id: 3, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 3, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 3, number: 7 },
+        //{ id: 4, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 4, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 4, number: 5 },
+        //{ id: 5, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 5, number: 5 },
+        //{ id: 6, number: 5 },
+        //{ id: 7, number: 3 },
         { id: -1, number: 0 }
 ];
 
 var level_4 = [
         { id: 0, number: 5 },
-        { id: 1, number: 10 },
-        { id: 0, number: 15 },
-        { id: 1, number: 5 },
-        { id: 2, number: 10 },
-        { id: 0, number: 15 },
-        { id: 2, number: 5 },
-        { id: 3, number: 10 },
-        { id: 0, number: 15 },
-        { id: 3, number: 5 },
-        { id: 4, number: 10 },
-        { id: 0, number: 15 },
-        { id: 3, number: 5 },
-        { id: 4, number: 5 },
-        { id: 5, number: 5 },
-        { id: 0, number: 15 },
-        { id: 4, number: 5 },
-        { id: 5, number: 10 },
-        { id: 0, number: 15 },
-        { id: 5, number: 5 },
-        { id: 6, number: 5 },
-        { id: 0, number: 15 },
-        { id: 5, number: 5 },
-        { id: 6, number: 5 },
-        { id: 7, number: 5 },
-        { id: 0, number: 15 },
-        { id: 3, number: 5 },
-        { id: 4, number: 6 },
-        { id: 5, number: 7 },
-        { id: 6, number: 8 },
-        { id: 7, number: 10 },
+       { id: 1, number: 2 },
+        //{ id: 1, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 1, number: 5 },
+        //{ id: 2, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 2, number: 5 },
+        //{ id: 3, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 3, number: 5 },
+        //{ id: 4, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 3, number: 5 },
+        //{ id: 4, number: 5 },
+        //{ id: 5, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 4, number: 5 },
+        //{ id: 5, number: 10 },
+        //{ id: 0, number: 15 },
+        //{ id: 5, number: 5 },
+        //{ id: 6, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 5, number: 5 },
+        //{ id: 6, number: 5 },
+        //{ id: 7, number: 5 },
+        //{ id: 0, number: 15 },
+        //{ id: 3, number: 5 },
+        //{ id: 4, number: 6 },
+        //{ id: 5, number: 7 },
+        //{ id: 6, number: 8 },
+        //{ id: 7, number: 10 },
         { id: -1, number: 0 }
 ];

@@ -153,7 +153,7 @@ GameEngine.prototype.startInput = function () {
         if (!that.gameStart && that.atStart) {
             var script = new Script(gameEngine, that.current_level);
             //console.log("level from start " + that.level);
-            level(that.current_level);
+            nextlevel(that.current_level);
         }
 
         if (!that.gameStart && that.atCredit) {
@@ -169,15 +169,14 @@ GameEngine.prototype.startInput = function () {
         if (that.atRetry) {
             if (that.gameover) {
                 MONEY = 20;
-                level(that.current_level);
+                nextlevel(that.current_level);               
             } 
 
             if (that.gameWon && that.current_level !== that.last_level) {
                 MONEY = 20;                
                 
                 that.current_level += 1;
-                level(that.current_level);
-               
+                nextlevel(that.current_level);
             }
         }
         //game over and retry the current level
