@@ -1,7 +1,7 @@
 //Set up for Tower2
 function Tower2(game, x, y) {
     Entity.call(this, game);
-
+    this.name = 'C';
     this.game = game;
     this.type = BULLET;
 
@@ -58,7 +58,7 @@ Tower2.prototype.draw = function (ctx) {
     if (chooseTower === 3) {
         //ctx.save();
         //ctx.globalAlpha = 0.5;
-        this.game.showOutlines
+        this.game.showOutlines = true;
         var x = this.game.row;
         var y = this.game.col;
 
@@ -70,6 +70,11 @@ Tower2.prototype.draw = function (ctx) {
 
         if (this.game.map.array[y][x] === GRASS) {
             this.game.ctx.drawImage(ASSET_MANAGER.getAsset("./img/tower2.png"), x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            this.game.ctx.beginPath();
+            this.game.ctx.strokeStyle = "white";
+            this.game.ctx.arc(x * BLOCK_SIZE + 50, y * BLOCK_SIZE + 50, this.range, 0, Math.PI * 2, false);
+            this.game.ctx.stroke();
+            this.game.ctx.closePath();
         } else {
             this.game.ctx.fillStyle = '#F44336';
             this.game.ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
@@ -202,12 +207,12 @@ Tower2Missile.prototype.draw = function (ctx) {
    
     //Entity.prototype.draw.call(this);
     //Draw circle around the object       
-    if (this.game.showOutlines) {
-        this.game.ctx.beginPath();
-        this.game.ctx.strokeStyle = "white";
-        this.game.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        this.game.ctx.stroke();
-        this.game.ctx.closePath();
-    }
+    //if (this.game.showOutlines) {
+    //    this.game.ctx.beginPath();
+    //    this.game.ctx.strokeStyle = "white";
+    //    this.game.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    //    this.game.ctx.stroke();
+    //    this.game.ctx.closePath();
+    //}
 }
 

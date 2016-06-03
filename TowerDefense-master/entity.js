@@ -25,6 +25,7 @@ var TOWER_ONE_COST = 10;
 var TOWER_TWO_COST = 15;
 var TOWER_THREE_COST = 20;
 
+var destroy = null;
 function Entity(game) {
     this.game = game;
     this.x = 0; //default

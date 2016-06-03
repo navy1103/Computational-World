@@ -1,7 +1,7 @@
 //Set up for monster
 //Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse)
 
-function Monster(game, image, width, duration, frame, speed, health, damage, worth, radius, healthBarMargin) {
+function Monster(game, image, width, height, duration, frame, speed, health, damage, worth, radius, healthBarMargin, dx) {
 //function Monster(game) { 
     Entity.call(this, game);
 
@@ -18,17 +18,17 @@ function Monster(game, image, width, duration, frame, speed, health, damage, wor
 
     this.width = width;
 
-    this.dx = 35;
-    this.dy = 35;
+    this.dx = dx;
+    this.dy = dx;
 
     this.speed = speed;
     this.direction = this.game.map.direction;
     this.radius = radius;
 
-    this.monsterDown = new Animation(image, 0, 0, width, width, duration, frame, true, false);
-    this.monsterLeft = new Animation(image, 0, width, width, width, duration, frame, true, false);
-    this.monsterRight = new Animation(image, 0, width * 2, width, width, duration, frame, true, false);
-    this.monsterUp = new Animation(image, 0, width * 3, width, width, duration, frame, true, false);
+    this.monsterDown = new Animation(image, 0, 0, width, height, duration, frame, true, false);
+    this.monsterLeft = new Animation(image, 0, width, width, height, duration, frame, true, false);
+    this.monsterRight = new Animation(image, 0, width * 2, width, height, duration, frame, true, false);
+    this.monsterUp = new Animation(image, 0, width * 3, width, height, duration, frame, true, false);
 }
 
 //Monter object is inherited from Entity Object

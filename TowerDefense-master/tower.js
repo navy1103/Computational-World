@@ -1,7 +1,7 @@
 //Set up for tower
 function Tower(game, x, y) {  
     Entity.call(this, game);
-
+    this.name = 'B';
     this.game = game;
     this.type = BULLET;
 
@@ -59,7 +59,7 @@ Tower.prototype.draw = function (ctx) {
     if (this.game.mouse && chooseTower === 2) {
         //ctx.save();
         //ctx.globalAlpha = 0.5;
-        this.game.showOutlines
+        this.game.showOutlines = true;
         var x = this.game.row;
         var y = this.game.col;
         
@@ -72,6 +72,11 @@ Tower.prototype.draw = function (ctx) {
         if (this.game.map.array[y][x] === GRASS) {            
             this.game.ctx.drawImage(ASSET_MANAGER.getAsset("./img/tower1.png"), x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
 
+            this.game.ctx.beginPath();
+            this.game.ctx.strokeStyle = "white";
+            this.game.ctx.arc(x * BLOCK_SIZE + 50, y * BLOCK_SIZE + 50, this.range, 0, Math.PI * 2, false);
+            this.game.ctx.stroke();
+            this.game.ctx.closePath();
             //this.tower.drawFrame(this.game.clockTick, ctx, x * BLOCK_SIZE - y * BLOCK_SIZE, this.y - this.dy);
         } else {
             this.game.ctx.fillStyle = '#F44336';
@@ -109,7 +114,7 @@ function TowerBullet(game, x, y, hit, targetX, targetY) {
     this.direction.x = (targetX - this.x);  //length
     this.direction.y = (targetY - this.y);  //height 
 
-    var speed = 2;
+    var speed = 6;
     var distance = Math.sqrt(this.direction.x * this.direction.x + this.direction.y * this.direction.y);
 
     this.direction.x = this.direction.x * speed / distance;

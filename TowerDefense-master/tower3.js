@@ -1,7 +1,7 @@
 //Set up for Tower2
 function Tower3(game, x, y) {
     Entity.call(this, game);
-
+    this.name = 'A';
     this.game = game;
     this.type = BULLET;
 
@@ -31,7 +31,7 @@ Tower3.prototype.update = function () {
                 var missile = new TowerArrow(this.game, this.x, this.y, this.hit, entity);
                 this.game.addTower(missile);
                 fired = true;
-                document.getElementById('missile_sound').play();
+                document.getElementById('bow').play();
             }
             i++;
         }
@@ -49,7 +49,7 @@ Tower3.prototype.draw = function (ctx) {
     if (chooseTower === 1) {
         //ctx.save();
         //ctx.globalAlpha = 0.5;
-        this.game.showOutlines
+        this.game.showOutlines = true;
         var x = this.game.row;
         var y = this.game.col;
 
@@ -60,7 +60,13 @@ Tower3.prototype.draw = function (ctx) {
         }
 
         if (this.game.map.array[y][x] === GRASS) {
+            this.game.ctx.beginPath();
+            this.game.ctx.strokeStyle = "white";
+            this.game.ctx.arc(x * BLOCK_SIZE + 50, y * BLOCK_SIZE + 50, this.range, 0, Math.PI * 2, false);
+            this.game.ctx.stroke();
+            this.game.ctx.closePath();
             this.game.ctx.drawImage(ASSET_MANAGER.getAsset("./img/tower3.png"), x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            
         } else {
             this.game.ctx.fillStyle = '#F44336';
             this.game.ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
@@ -109,7 +115,7 @@ function TowerArrow(game, x, y, hit, target) {
     //this.animationCounter = 0; //turn 0 and then 1, and then back to 0 because we have 2 frames for the missile animation
 
     //this.flies = ["./img/missile1.png", "./img/missile1.png", "./img/missile1.png", "./img/missile2.png", "./img/missile2.png", "./img/missile2.png"];
-    this.missile = new Animation(ASSET_MANAGER.getAsset("./img/arrow.png"), 0, 0, 100, 100, 0.05, 1, true, false);
+    this.missile = new Animation(ASSET_MANAGER.getAsset("./img/arrow.png"), 0, 0, 50, 51, 0.05, 1, true, false);
     //this.blowup = new Animation(ASSET_MANAGER.getAsset("./img/blowup.png"), 0, 0, 100, 100, 10, 4, false, false);
 }
 
@@ -129,7 +135,7 @@ TowerArrow.prototype.update = function () {
             this.targetHit = true;
             this.lastEnemyX = this.target.x;
             this.lastEnemyY = this.target.y;
-            document.getElementById('grenade_explosion_sound').play();
+            //document.getElementById('grenade_explosion_sound').play();
             //this.blowup.drawFrame(this.game.clockTick, this.game.ctx, this.x - this.dx, this.y - this.dy);            
             if (entity.health <= 0) {
                 entity.removeFromWorld = true;
@@ -178,7 +184,7 @@ TowerArrow.prototype.update = function () {
     //this.animationCounter = (this.animationCounter + 1) % 6; //<----- total frames 
     var rotatedImage = this.rotateAndCache(ASSET_MANAGER.getAsset("./img/arrow.png"), angle);
     
-    this.missile = new Animation(rotatedImage, 0, 0, 100, 100, 1, 2, true, false);
+    this.missile = new Animation(rotatedImage, 0, 0, 50, 51, 1, 2, true, false);
 
     Entity.prototype.update.call(this);
 }
@@ -193,12 +199,12 @@ TowerArrow.prototype.draw = function (ctx) {
    
     //Entity.prototype.draw.call(this);
     //Draw circle around the object       
-    if (this.game.showOutlines) {
-        this.game.ctx.beginPath();
-        this.game.ctx.strokeStyle = "white";
-        this.game.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        this.game.ctx.stroke();
-        this.game.ctx.closePath();
-    }
+    //if (this.game.showOutlines) {
+    //    this.game.ctx.beginPath();
+    //    this.game.ctx.strokeStyle = "white";
+    //    this.game.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    //    this.game.ctx.stroke();
+    //    this.game.ctx.closePath();
+    //}
 }
 

@@ -4,15 +4,15 @@ function Gate(game) {
 
     this.game = game;
     this.type = GATE;
-    this.life = 10;
+    this.life = 100;
     this.maxLife = 100;
 
     this.x = 0;
     this.y = 0;
-    this.dx = 50;
-    this.dy = 50;
+    this.dx = 70;
+    this.dy = 70;
 
-    this.gate = new Animation(ASSET_MANAGER.getAsset("./img/left_gate.png"), 0, 0, 70, 100, 1, 1, true, false);
+    this.gate = new Animation(ASSET_MANAGER.getAsset("./img/castle_7.png"), 0, 0, 120, 130, 1, 1, true, false);
 }
 
 Gate.prototype = new Entity();

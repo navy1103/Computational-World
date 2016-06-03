@@ -17,7 +17,7 @@ Map.prototype = new Entity();
 Map.prototype.constructor = Map;
 
 Map.prototype.drawGrid = function (ctx) {
-    console.log("draw grid");
+    //console.log("draw grid");
     for (var i = 1; i < this.mapSize; i++) {        
         for (var j = 1; j < this.mapSize; j++) {
             ctx.beginPath();
@@ -55,10 +55,9 @@ Map.prototype.draw = function (ctx) {
         }
     }
 
-    if (chooseTower === 1 || chooseTower === 2 || chooseTower === 3) {
+    if (chooseTower === 1 || chooseTower === 2 || chooseTower === 3 || destroy === 1 || destroy === 2) {
         //console.log("Tower is chosen!");
         this.drawGrid(ctx);
-
     }
    
 }

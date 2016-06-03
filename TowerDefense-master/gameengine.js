@@ -43,7 +43,7 @@ function GameEngine() {
     this.map = new Map(this); //default map
 	this.gate = new Gate(this);    
 
-	this.test = [new Tower(this, 0, 0), new Tower2(this, 100, 100), new Tower3(this, 200, 200)];
+	//this.test = [new Tower(this, 0, 0), new Tower2(this, 100, 100), new Tower3(this, 200, 200)];
 
 	this.showOutlines = false;
     this.ctx = null;
@@ -57,16 +57,17 @@ function GameEngine() {
     this.row = 0; //for putting a tower onto the map
     this.col = 0; //for putting a tower onto the map
 
-    this.finishedRound = false;
-    this.gameWon = false;
-    this.gameover = false;
-    this.gameStart = false;
-    this.atStart = false;
-    this.atRetry = false;
-    this.atCredit = false;
-    this.atBack = false;
-    this.showCredit = false;
-    this.level = 0;
+    this.finishedRound = null;
+    this.gameWon = null;
+    this.gameover = null;
+    this.gameStart = null;
+    this.atStart = null;
+    this.atRetry = null;
+    this.atCredit = null;
+    this.atBack = null;
+    this.showCredit = null;
+    this.current_level = 1;
+    this.last_level = 4;
 }
 
 //Game initialized
@@ -116,44 +117,43 @@ GameEngine.prototype.startInput = function () {
         if (!that.gameStart && that.mouse.x >= 350 && that.mouse.x <= 450 && that.mouse.y >= 470 && that.mouse.y <= 500) {
             that.atStart = true;
         } else {
-            that.atStart = false;
+            that.atStart = null;
         }
 
         //Mouse move over the start text at welcome screen
         if (!that.gameStart && that.mouse.x >= 335 && that.mouse.x <= 460 && that.mouse.y >= 535 && that.mouse.y <= 570) {
             that.atCredit = true;
         } else {
-            that.atCredit = false;           
+            that.atCredit = null;
         }
         
         //Mouse move over the start text at welcome screen
-        if (that.showCredit && that.mouse.x >= 370 && that.mouse.x <= 410 && that.mouse.y >= 520 && that.mouse.y <= 550) {
+        if (that.showCredit && that.mouse.x >= 370 && that.mouse.x <= 430 && that.mouse.y >= 520 && that.mouse.y <= 550) {
             that.atBack = true;
         } else {
-            that.atBack = false;
+            that.atBack = null;
         }
 
         //Mouse move over the retry text when game is over
-        if (that.gameover && that.mouse.x >= 360 && that.mouse.x <= 410 && that.mouse.y >= 420 && that.mouse.y <= 450) {
+        if ((that.gameover && that.mouse.x >= 350 && that.mouse.x <= 410 && that.mouse.y >= 420 && that.mouse.y <= 450) || 
+              (that.gameWon && that.mouse.x >= 360 && that.mouse.x <= 560 && that.mouse.y >= 420 && that.mouse.y <= 450) ) {
             that.atRetry = true;
         } else {
-            that.atRetry = false;
-        }
-
-        if (that.gameWon && that.mouse.x >= 360 && that.mouse.x <= 560 && that.mouse.y >= 420 && that.mouse.y <= 450) {
-            that.atRetry = true;
-        } else {
-            that.atRetry = false;
+            that.atRetry = null;
         }
     }, false);
 
     this.ctx.canvas.addEventListener("click", function (e) {        
         that.click = getXandY(e);
 
-        //click on start to start the gamge
+        that.row = Math.floor(getXandY(e).x / BLOCK_SIZE);
+        that.col = Math.floor(getXandY(e).y / BLOCK_SIZE);
+
+        //click on start to start the game at level 1
         if (!that.gameStart && that.atStart) {
-            new Script(gameEngine, 1);
-            level_1();
+            var script = new Script(gameEngine, that.current_level);
+            //console.log("level from start " + that.level);
+            level(that.current_level);
         }
 
         if (!that.gameStart && that.atCredit) {
@@ -161,31 +161,45 @@ GameEngine.prototype.startInput = function () {
         }
 
         if (!that.gameStart && that.atBack) {
-            that.showCredit = false;
+            that.showCredit = null;
         }
 
-        if (that.gameover && that.atRetry) {
-            MONEY = 20;
-            if (that.level === 1) {
-                level_1();
+
+        //retry when lose or move to next level
+        if (that.atRetry) {
+            if (that.gameover) {
+                MONEY = 20;
+                level(that.current_level);
+            } 
+
+            if (that.gameWon && that.current_level !== that.last_level) {
+                MONEY = 20;                
+                
+                that.current_level += 1;
+                level(that.current_level);
+               
             }
         }
+        //game over and retry the current level
+        //if (that.gameover && that.atRetry) {
+        //    //that.gameover = false;
+        //    MONEY = 20;            
+        //    level(that.level);            
+        //}
 
-        if (that.gameWon && that.atRetry) {
-            MONEY = 20;
-            if (that.level === 1) {
-                level_2();
-            }
-        }
-
-        that.row = Math.floor(getXandY(e).x / BLOCK_SIZE);
-        that.col = Math.floor(getXandY(e).y / BLOCK_SIZE);
-
+        ////win current level and move on next lvl
+        //if (that.gameWon && that.atRetry) {
+        //    //that.gameWon = false;
+        //    MONEY = 20;            
+        //    that.level += 1;
+        //    level(that.level);            
+        //}
     }, false);
 
     //Cancel click
     this.ctx.canvas.addEventListener("contextmenu", function (e) {
         chooseTower = null;
+        destroy = null;
         e.preventDefault();
     }, false);
     
@@ -218,8 +232,9 @@ GameEngine.prototype.draw = function () {
     this.ctx.save();
 	
     this.map.draw(this.ctx);    //map
+    //this.ctx.drawImage(ASSET_MANAGER.getAsset("./img/grasstile.jpg"), this.gate.x - 50, this.gate.y - 50);
     this.gate.draw(this.ctx);   //gate
-
+    
     if (this.towers.length !== 0) {
         for (var i = 0; i < this.towers.length; i++) {  //towers
             this.towers[i].draw(this.ctx);
@@ -246,7 +261,7 @@ GameEngine.prototype.draw = function () {
         if (this.atRetry) {
             context.beginPath();
             context.font = "bold 35px Arial";
-            context.fillStyle = "#FFFFFF";
+            context.fillStyle = "#42A5F5";
             context.fillText("RETRY", 340, 450);
             context.closePath();
         } else {
@@ -255,8 +270,7 @@ GameEngine.prototype.draw = function () {
             context.fillStyle = "#FFFFFF";
             context.fillText("RETRY", 350, 450);
             context.closePath();
-        }
-        
+        }        
     }
 
     if (this.gameWon) {
@@ -265,61 +279,82 @@ GameEngine.prototype.draw = function () {
         context.rect(0, 300, 800, 200);
         context.stroke();
         context.fill();
-
-        context.beginPath();
-        context.font = "bold 30px Arial";
-        context.fillStyle = "#FFFFFF";
-        context.fillText("CONGRATULATION !!! YOU WIN !!!", 150, 380);
-        context.closePath();
-        if (this.atRetry) {
+        if (this.current_level === this.last_level) {
             context.beginPath();
-            context.font = "bold 35px Arial";
-            context.fillStyle = "#FFFFFF";
-            context.fillText("NEXT LEVEL", 295, 450);
+            context.font = "bold 40px Arial";
+            context.fillStyle = "#FBC02D";
+            context.fillText("CONGRATULATION !!!", 200, 380);
+            context.fillText("YOU SAVE OUR COUNTRY !!!", 150, 430);
             context.closePath();
         } else {
             context.beginPath();
-            context.font = "bold 25px Arial";
-            context.fillStyle = "#FFFFFF";
-            context.fillText("NEXT LEVEL", 320, 450);
+            context.font = "bold 40px Arial";
+            context.fillStyle = "#FBC02D";
+            context.fillText("CONGRATULATION !!!", 200, 380);
             context.closePath();
         }
 
+        if (this.current_level !== this.last_level) {
+            if (this.atRetry) {
+                context.beginPath();
+                context.font = "bold 35px Arial";
+                context.fillStyle = "#42A5F5";
+                context.fillText("NEXT LEVEL", 295, 450);
+                context.closePath();
+            } else {
+                context.beginPath();
+                context.font = "bold 25px Arial";
+                context.fillStyle = "#FFFFFF";
+                context.fillText("NEXT LEVEL", 320, 450);
+                context.closePath();
+            }
+        }
     }
 
     //Wellcome screen with start button
     if (!this.gameStart) {
         var context = this.ctx;
+
         context.beginPath();
         context.rect(200, 0, 400, 800);
         context.stroke();
+        context.fillStyle = "#FFD54F";
         context.fill();
+
+        for (var x = 0; x < 8; x++) {
+            for (var y = 0; y < 8; y++) {
+                if(x < 2 || x > 5)
+                    context.drawImage(ASSET_MANAGER.getAsset("./img/grasstile.jpg"), x * BLOCK_SIZE, y * BLOCK_SIZE);
+            }
+        }
+
+        
         if (!this.showCredit) {
-            context.beginPath();
-            context.font = "bold 45px Arial";
-            context.fillStyle = "#FFFFFF";
-            context.fillText("GOLD THREE", 250, 200);
-            context.fillText("TOWER DEFEND", 220, 280);
-            context.closePath();
+            //context.beginPath();
+            context.drawImage(ASSET_MANAGER.getAsset("./img/title.png"), 210, 180);
+            //context.closePath();
             if (this.atStart) {
                 context.beginPath();
                 context.font = "bold 40px Arial";
-                context.fillStyle = "#FFFFFF";
+                context.fillStyle = "#42A5F5";
                 context.fillText("START", 340, 500);
                 context.font = "bold 30px Arial";
+                context.fillStyle = "#9C27B0";
                 context.fillText("CREDITS", 335, 570);
                 context.closePath();
             } else if (this.atCredit) {
                 context.beginPath();
                 context.font = "bold 30px Arial";
-                context.fillStyle = "#FFFFFF";
+                context.fillStyle = "#9C27B0";
                 context.fillText("START", 350, 500);
                 context.font = "bold 40px Arial";
+                context.fillStyle = "#42A5F5";
                 context.fillText("CREDITS", 315, 570);
                 context.closePath();
             } else if (!this.atStart && !this.atCredit) {
                 context.beginPath();
                 context.font = "bold 30px Arial";
+                context.fillStyle = "#9C27B0";
                 context.fillText("START", 350, 500);
                 context.fillText("CREDITS", 335, 570);
                 context.closePath();
@@ -327,18 +362,21 @@ GameEngine.prototype.draw = function () {
         } else if (this.showCredit) {
             context.beginPath();
             context.font = "bold 40px Arial";
-            context.fillStyle = "#FFFFFF";
+            context.fillStyle = "#000000";
             context.fillText("CREDITS", 310, 200);
             context.font = "bold 25px Arial";
-            context.fillText("Hieu", 335, 300);
-            context.fillText("Long", 335, 350);
-            context.fillText("Navy", 335, 400);
-            context.fillText("Sawet", 335, 450);
+            context.fillStyle = "#E65100";
+            context.fillText("Hieu Nguyen", 325, 300);
+            context.fillText("Long Nguyen", 325, 350);
+            context.fillText("Navy Nguyen", 325, 400);
+            context.fillText("Sawet Manachaichana", 270, 450);
             if (this.atBack) {
                 context.font = "bold 35px Arial";
-                context.fillText("Back", 362, 550);
+                context.fillStyle = "#42A5F5";
+                context.fillText("Back", 362, 550);                
                 context.closePath();
             } else {
+                context.fillStyle = "#9C27B0";
                 context.fillText("Back", 370, 550);
                 context.closePath();
             }
@@ -348,13 +386,8 @@ GameEngine.prototype.draw = function () {
     this.ctx.restore();
 }
 
-GameEngine.prototype.update = function () {
-    //count enemies
-    // if (this.enemyList.length === 0 && this.entities.length === 2) {
-    //     this.gameWon = true;
-    //     console.log("Contratulation! You won this stage!");
-    // }
-    if (this.entities.length === 3 && this.finishedRound) {
+GameEngine.prototype.update = function () {    
+    if (this.entities.length === 5 && this.finishedRound) {
         this.gameWon = true;
         console.log("You won!");
     }
@@ -427,7 +460,7 @@ GameEngine.prototype.update = function () {
                 if (MONEY >= TOWER_TWO_COST) {
                     this.map.array[this.col][this.row] = TOWER;
                     this.towers.push(new Tower(this, this.row * 100, this.col * 100));
-                    MONEY -= TOWER_ONE_COST;
+                    MONEY -= TOWER_TWO_COST;
                     document.getElementById("money").innerHTML = MONEY;
                 }
                 //this.map.array[this.col][this.row] = TOWER;
@@ -439,7 +472,7 @@ GameEngine.prototype.update = function () {
                 if (MONEY >= TOWER_THREE_COST) {
                     this.map.array[this.col][this.row] = TOWER;
                     this.towers.push(new Tower2(this, this.row * 100, this.col * 100));
-                    MONEY -= TOWER_TWO_COST;
+                    MONEY -= TOWER_THREE_COST;
                     document.getElementById("money").innerHTML = MONEY;
                 }
 
@@ -447,16 +480,40 @@ GameEngine.prototype.update = function () {
                 //this.towers.push(new Tower2(this, this.row * 100, this.col * 100));
                 //console.log("x = " + this.row + "y = " + this.col + " " + this.map.array[this.col][this.row]);
             }
-
-            
         }
+
+        if (destroy === 1) {
+            if (MONEY >= TOWER_ONE_COST && this.map.array[this.col][this.row] === TREE) {
+                this.map.array[this.col][this.row] = GRASS;
+                MONEY -= TOWER_ONE_COST;
+                document.getElementById("money").innerHTML = MONEY;
+            }
+        } else if (destroy === 2){
+            if (this.map.array[this.col][this.row] === TOWER) {
+                for (var i = 0; i < this.towers.length; i++) {
+                    var temp = this.towers[i];
+                    if (temp.x === (this.row * 100) && temp.y === (this.col * 100)) {
+                        if (temp.name === 'A') MONEY += 7;
+                        if (temp.name === 'B') MONEY += 11;
+                        if (temp.name === 'C') MONEY += 15;
+                        this.map.array[this.col][this.row] = GRASS;
+                        document.getElementById("money").innerHTML = MONEY;
+                        this.towers.splice(i, 1);
+                    }
+                }
+            }
+        }
+
         chooseTower = null;
+        destroy = null;
+        this.showOutlines = false;
+
     }
 
 }
 
 GameEngine.prototype.loop = function () {
-    if (!this.gameStart && !this.gameover && !this.gameWon) {        
+    if (!this.gameStart) {        
         //this.update();
         this.draw();
         this.click = null;
@@ -468,11 +525,13 @@ GameEngine.prototype.loop = function () {
         //console.log("entity length" + this.entities.length);
         if (this.gameover) {
             document.getElementById("gameover").play();
-            clearInterval(spawn);
+            window.clearInterval(spawn);
         } else if (this.gameWon) {
-            // game won sound
+            document.getElementById("win").play();
+            window.clearInterval(spawn);
         }
-    } else if (this.gameStart && (this.gameover || this.gameWon)) {        
+    } else if (this.gameStart && (this.gameover || this.gameWon)) {
+        this.click = null;
         this.draw();
     }        
 }
