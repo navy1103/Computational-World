@@ -1,0 +1,45 @@
+﻿
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">-->
+        <script type="text/javascript" src="http://76.28.150.193:8888/socket.io/socket.io.js"></script>
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>
+        <script type="text/javascript" src="./Math.js"></script>
+        <script type="text/javascript" src="./InputManager.js"></script>
+        <script type="text/javascript" src="./Starfield.js"></script>
+        <script type="text/javascript" src="./Entities.js"></script>
+        <script type="text/javascript" src="./Game.js"></script>
+        <script type="text/javascript" src="./Main.js"></script>
+
+        <style>
+            #screen {
+                margin: 0 auto;
+                background-color: #F0F;
+            }
+
+            .fpsmeter {
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+                .fpsmeter p {
+                    margin-top: 0px;
+                    margin-bottom: 0px;
+                }
+        </style>
+    </head>
+
+    <body> 
+
+        <canvas id='screen' width='800' height='800' style="margin-top:10px;"></canvas>
+        
+        <ol>
+            <li>Press ESC to pause / unpause</li>
+            <li>Using move to dodge the bullets</li>
+        </ol>
+    </body>
+</html>
