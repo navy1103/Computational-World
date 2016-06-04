@@ -34,7 +34,7 @@ Game.prototype.Update = function (elapsed)
 		this.level = Math.floor(this.time / 30 + 1); // Increase level every 15 seconds
 
 		// Create new enemy every 40 frames or so, with life equal to difficulty level.
-		if (RandomInt(70) == 0)
+		if (RandomInt(50) == 0)
 			this.enemies.Add(canvas.width + 20, RandomFloat(canvas.height), 10, 170, this.level, RandomIntRange(2,9), RandomIntRange(2,9));
 
 		// Update of game entities
