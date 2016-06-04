@@ -47,6 +47,7 @@ $(document).ready(function () {
 
     //saveButton.addEventListener("click", function () {
     document.getElementById("save").onclick = function save() {
+        pause = true;
         console.log("save button clicked");
         var saveList = [];
 
