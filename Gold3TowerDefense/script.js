@@ -79,12 +79,12 @@ Script.prototype.loadStage = function () {
              ['E', 'G', 'R', 'R', 'R', 'G', 'G', 'G'],
              ['R', 'G', 'R', 'G', 'R', 'R', 'R', 'G'],
              ['R', 'R', 'R', 'G', 'G', 'G', 'R', 'R'],
-             ['G', 'G', 'R', 'G', 'G', 'G', 'G', 'R'],
+             ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'R'],
              ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'R'],
              ['G', 'G', 'G', 'G', 'R', 'R', 'R', 'R'],
-             ['G', 'R', 'R', 'R', 'R', 'G', 'G', 'G'],
-             ['G', 'S', 'G', 'G', 'G', 'G', 'G', 'G']];
-	        map.startDirection = NORTH;
+             ['S', 'R', 'R', 'R', 'R', 'G', 'G', 'G'],
+             ['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G']];
+	        map.startDirection = EAST;
 
 	        // randomly generate trees
 	        generateTree();

@@ -1,5 +1,6 @@
 var chooseTower = null;
 var spawn = null;
+var soundOn = true;
 // the "main" code begins here
 var ASSET_MANAGER = new AssetManager();
 
@@ -30,6 +31,8 @@ ASSET_MANAGER.queueDownload("./img/blowup.png");
 
 ASSET_MANAGER.queueDownload("./img/axe.png");
 ASSET_MANAGER.queueDownload("./img/coins.png");
+ASSET_MANAGER.queueDownload("./img/sound_image.png");
+ASSET_MANAGER.queueDownload("./img/mute_sound_image.png");
 
 var gameEngine = null;
 
@@ -55,22 +58,31 @@ function display_game() {
 }
 
 function mute() {
-    document.getElementById("mp5_smg_sound").volume = 0.0;
-    document.getElementById("grenade_explosion_sound").volume = 0.0;
-    document.getElementById("missile_sound").volume = 0.0;
-    document.getElementById("gameover").volume = 0.0;
-    document.getElementById("bow").volume = 0.0;
-    document.getElementById("win").volume = 0.0;
+    if (soundOn) {
+        document.getElementById("mp5_smg_sound").volume = 0.0;
+        document.getElementById("grenade_explosion_sound").volume = 0.0;
+        document.getElementById("missile_sound").volume = 0.0;
+        document.getElementById("gameover").volume = 0.0;
+        document.getElementById("bow").volume = 0.0;
+        document.getElementById("win").volume = 0.0;
+        soundOn = false;
+        document.getElementById("sound_setting").src = "img/sound_image.png";
+    } else {
+        document.getElementById("mp5_smg_sound").volume = 0.5;
+        document.getElementById("grenade_explosion_sound").volume = .5;
+        document.getElementById("missile_sound").volume = .7;
+        document.getElementById("gameover").volume = 1.0;
+        document.getElementById("bow").volume = .7;
+        document.getElementById("win").volume = 1.0;
+        soundOn = true;
+        document.getElementById("sound_setting").src = "img/mute_sound_image.png";
+    }
 }
 
-function unmute() {
-    document.getElementById("mp5_smg_sound").volume = 0.5;
-    document.getElementById("grenade_explosion_sound").volume = .5;
-    document.getElementById("missile_sound").volume = .7;
-    document.getElementById("gameover").volume = 1.0;
-    document.getElementById("bow").volume = .7;
-    document.getElementById("win").volume = 1.0;
-}
+// function unmute() {
+
+// }
+
 function nextlevel(num) {
     display_game();    
 
@@ -133,7 +145,7 @@ function nextlevel(num) {
         // display next wave information
         var nextWave = script[count + 1];
 
-        if (nextWave.id !== -1) {
+        if (nextWave && nextWave.id !== -1) {
             if (nextWave.id === 0) {                
                 nextWave = script[count + 2];
             }
@@ -163,33 +175,33 @@ function nextlevel(num) {
         if (monsterNumber < curentWave.number && curentWave.id === 0) {
             monsterNumber++;
         } else if (monsterNumber < curentWave.number && curentWave.id === 1) {
-            // (parameters in this order) game, image, width, duration, frame, speed, health, damage, worth, radius, health-bar-margin
-            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster1.png"), 70, 70, .25, 3, 1.2, 15, 2, 1, 27, 20, 35));
+            // (parameters in this order) game, image, width, duration, frame, speed, health, damage, worth, radius, health-bar-margin, x-y offset
+            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster1.png"), 70, 70, .25, 3, 1.2, 15, 2, 2, 27, 20, 35));
             monsterNumber++;
         }
         else if (monsterNumber < curentWave.number && curentWave.id === 2) {
-            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster2.png"), 70, 70, .25, 8, 1.3, 50, 3, 2, 30, 40, 35));
+            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster2.png"), 70, 70, .25, 8, 1.3, 50, 3, 4, 30, 40, 35));
             monsterNumber++;
         } else if (monsterNumber < curentWave.number && curentWave.id === 3) {
-            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster3.png"), 70, 70, .15, 8, 1.6, 125, 4, 3, 32, 40, 35));
+            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster3.png"), 70, 70, .15, 8, 1.6, 125, 4, 6, 32, 40, 35));
             monsterNumber++;
         } else if (monsterNumber < curentWave.number && curentWave.id === 4) {
-            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster4.png"), 70, 70, .15, 8, 1.8, 180, 5, 4, 32, 40, 35));
+            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/monster4.png"), 70, 70, .15, 8, 1.8, 180, 5, 8, 32, 40, 35));
             monsterNumber++;
         } else if (monsterNumber < curentWave.number && curentWave.id === 5) {
-            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/flydragon.png"), 117.5, 117.5, .15, 4, 2, 210, 6, 5, 32, 40, 60));
+            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/flydragon.png"), 117.5, 117.5, .15, 4, 2, 210, 6, 10, 32, 40, 60));
             monsterNumber++;
         } else if (monsterNumber < curentWave.number && curentWave.id === 6) {
-            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/behemot.png"), 96, 96, .15, 3, 2, 230, 7, 5, 32, 40, 47));
+            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/behemot.png"), 96, 96, .15, 3, 2, 230, 7, 12, 32, 40, 47));
             monsterNumber++;
         } else if (monsterNumber < curentWave.number && curentWave.id === 7) {
-            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/dragon.png"), 96, 96, .15, 4, 2, 250, 8, 5, 32, 40, 48));
+            gameEngine.addEntity(new Monster(gameEngine, ASSET_MANAGER.getAsset("./img/dragon.png"), 96, 96, .15, 4, 2, 250, 8, 14, 32, 40, 48));
             monsterNumber++;
         } else {
             count++;
             monsterNumber = 0;
-            if (count < script.length && script[count].id !== -1) {
-                if(script[count].id === 0)
+            if (script[count].id !== -1) {
+                if(script[count].id !== 0)
                     min = script[count].number + script[count + 1].number;
                 else 
                     min = script[count].number;
@@ -202,111 +214,122 @@ function nextlevel(num) {
 
 var level_1 = [
        { id: 0, number: 5 },
-       { id: 1, number: 2 },
-       //{ id: 1, number: 10 },
-       //{ id: 0, number: 15 },
-       //{ id: 1, number: 15 },
-       //{ id: 0, number: 15 },
-       //{ id: 1, number: 10 },
-       //{ id: 2, number: 5 },
-       //{ id: 0, number: 15 },
-       //{ id: 2, number: 15 },
-       //{ id: 0, number: 15 },
-       //{ id: 1, number: 10 },
-       //{ id: 2, number: 10 },
-       //{ id: 3, number: 5 },
-       //{ id: 4, number: 2 },
+       { id: 1, number: 10 },
+       { id: 0, number: 10 },
+       { id: 1, number: 15 },
+       { id: 0, number: 10 },
+       { id: 1, number: 10 },
+       { id: 2, number: 5 },
+       { id: 0, number: 10 },
+       { id: 2, number: 15 },
+       { id: 0, number: 10 },
+       { id: 2, number: 10 },
+       { id: 2, number: 10 },
+       { id: 3, number: 5 },
+       { id: 4, number: 2 },
        { id: -1, number: 0 }
 ];
 
 var level_2 = [
         { id: 0, number: 5 },
-        { id: 1, number: 2 },
-        //{ id: 1, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 1, number: 10 },        
-        //{ id: 2, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 2, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 2, number: 10 },
-        //{ id: 3, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 3, number: 10 },
-        //{ id: 4, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 4, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 1, number: 5 },
-        //{ id: 2, number: 5 },
-        //{ id: 3, number: 5 },
-        //{ id: 4, number: 5 },
-        //{ id: 5, number: 5 },
-        //{ id: 6, number: 2 },
+        { id: 1, number: 10 },
+        { id: 0, number: 10 },
+        { id: 1, number: 15 },        
+        { id: 0, number: 10 },
+        { id: 2, number: 5 },
+        { id: 0, number: 10 },
+        { id: 1, number: 10 },
+        { id: 0, number: 10 },
+        { id: 2, number: 5 },
+        { id: 0, number: 10 },
+        { id: 2, number: 10 },
+        { id: 0, number: 10 },
+        { id: 3, number: 5 },
+        { id: 0, number: 10 },
+        { id: 4, number: 10 },
+        { id: 0, number: 10 },
+        { id: 1, number: 5 },
+        { id: 2, number: 5 },
+        { id: 0, number: 5 },
+        { id: 3, number: 5 },
+        { id: 0, number: 5 },
+        { id: 4, number: 5 },
+        { id: 0, number: 5 },
+        { id: 5, number: 5 },
         { id: -1, number: 0 }
 ];
 
 var level_3 = [
         { id: 0, number: 5 },
-        { id: 1, number: 2 },
-        //{ id: 1, number: 15 },
-        //{ id: 0, number: 15 },
-        //{ id: 1, number: 7 },
-        //{ id: 2, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 2, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 2, number: 7 },
-        //{ id: 3, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 3, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 3, number: 7 },
-        //{ id: 4, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 4, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 4, number: 5 },
-        //{ id: 5, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 5, number: 5 },
-        //{ id: 6, number: 5 },
-        //{ id: 7, number: 3 },
+        { id: 1, number: 10 },
+        { id: 0, number: 10 },
+        { id: 1, number: 5 },
+        { id: 0, number: 5 },
+        { id: 2, number: 5 },
+        { id: 0, number: 10 },
+        { id: 2, number: 5 },
+        { id: 0, number: 10 },
+        { id: 2, number: 7 },
+        { id: 0, number: 3 },
+        { id: 1, number: 5 },
+        { id: 0, number: 10 },
+        { id: 2, number: 10 },
+        { id: 0, number: 10 },
+        { id: 3, number: 5 },
+        { id: 0, number: 5 },
+        { id: 2, number: 5 },
+        { id: 0, number: 10 },
+        { id: 3, number: 7 },
+        { id: 0, number: 10 },
+        { id: 4, number: 5 },
+        { id: 0, number: 10 },
+        { id: 5, number: 5 },
+        { id: 0, number: 10 },
+        { id: 5, number: 5 },
+        { id: 0, number: 5 },
+        { id: 6, number: 5 },
+        { id: 0, number: 5 },
+        { id: 7, number: 3 },
         { id: -1, number: 0 }
 ];
 
 var level_4 = [
         { id: 0, number: 5 },
-       { id: 1, number: 2 },
-        //{ id: 1, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 1, number: 5 },
-        //{ id: 2, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 2, number: 5 },
-        //{ id: 3, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 3, number: 5 },
-        //{ id: 4, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 3, number: 5 },
-        //{ id: 4, number: 5 },
-        //{ id: 5, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 4, number: 5 },
-        //{ id: 5, number: 10 },
-        //{ id: 0, number: 15 },
-        //{ id: 5, number: 5 },
-        //{ id: 6, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 5, number: 5 },
-        //{ id: 6, number: 5 },
-        //{ id: 7, number: 5 },
-        //{ id: 0, number: 15 },
-        //{ id: 3, number: 5 },
-        //{ id: 4, number: 6 },
-        //{ id: 5, number: 7 },
-        //{ id: 6, number: 8 },
-        //{ id: 7, number: 10 },
+        { id: 1, number: 10 },
+        { id: 0, number: 10 },
+        { id: 1, number: 5 },
+        { id: 0, number: 10 },
+        { id: 2, number: 5 },
+        { id: 0, number: 10 },
+        { id: 2, number: 5 },
+        { id: 0, number: 10 }, // 
+        { id: 3, number: 3 },
+        { id: 0, number: 10 },
+        { id: 3, number: 5 },
+        { id: 0, number: 10 }, //
+        { id: 2, number: 10 },
+        { id: 0, number: 10 },
+        { id: 3, number: 5 },
+        { id: 0, number: 10 },
+        { id: 4, number: 3 },
+        { id: 0, number: 10 },
+        { id: 5, number: 3 },
+        { id: 0, number: 7 },
+        { id: 4, number: 5 },
+        { id: 0, number: 10 },
+        { id: 5, number: 10 },
+        { id: 0, number: 10 },
+        { id: 5, number: 5 },
+        { id: 6, number: 5 },
+        { id: 0, number: 10 },
+        { id: 5, number: 5 },
+        { id: 6, number: 5 },
+        { id: 7, number: 5 },
+        { id: 0, number: 10 },
+        { id: 5, number: 5 },
+        { id: 4, number: 5 },
+        { id: 5, number: 20 },
+        { id: 6, number: 10 },
+        { id: 7, number: 30 },
         { id: -1, number: 0 }
 ];

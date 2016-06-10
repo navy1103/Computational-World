@@ -13,7 +13,7 @@ function Tower3(game, x, y) {
     this.fireFrequency = 20; //every 300 turns, fires a Missile
     this.fireCounter = 20;
     this.range = 300;    
-    this.hit = 2; //default - can be upgraded
+    this.hit = 1; //default - can be upgraded
 
     this.tower = new Animation(ASSET_MANAGER.getAsset("./img/tower3.png"), 0, 0, 100, 100, 1, 1, true, false);
 }
