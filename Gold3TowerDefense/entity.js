@@ -22,7 +22,7 @@ var ENEMY_MONSTER = 1;
 
 var MONEY = 20; //default money
 var TOWER_ONE_COST = 10;
-var TOWER_TWO_COST = 15;
+var TOWER_TWO_COST = 12;
 var TOWER_THREE_COST = 20;
 
 var destroy = null;
