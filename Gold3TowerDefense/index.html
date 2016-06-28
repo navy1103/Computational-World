@@ -1,0 +1,171 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Game Project Shell</title>
+    <script type="text/javascript" src="./assetmanager.js"></script>
+    <script type="text/javascript" src="./gameengine.js"></script>
+    <script type="text/javascript" src="./entity.js"></script>
+    <script type="text/javascript" src="./animation.js"></script>
+    <script type="text/javascript" src="./script.js"></script>
+    <script type="text/javascript" src="./map.js"></script> 
+    <script type="text/javascript" src="./tower.js"></script>
+    <script type="text/javascript" src="./tower2.js"></script>
+    <script type="text/javascript" src="./tower3.js"></script>
+    <script type="text/javascript" src="./monster.js"></script>
+    <script type="text/javascript" src="./gate.js"></script>
+    <script type="text/javascript" src="./main.js"></script>
+    <script type="text/javascript" src="./welcome.js"></script>
+    <script type="text/javascript" src="./tool.js"></script>
+    <audio src="./sound/gun.mp3" id="mp5_smg_sound" preload="auto" onloadeddata="volume = 0.3;"></audio>
+    <audio src="./sound/explosion.mp3" id="grenade_explosion_sound" preload="auto"></audio>
+    <audio src="./sound/missile.mp3" id="missile_sound" preload="auto"></audio>
+    <audio src="./sound/gameover.wav" id="gameover" preload="auto"></audio>
+    <audio src="./sound/bow.mp3" id="bow" preload="auto"></audio>
+    <audio src="./sound/win.mp3" id="win" preload="auto"></audio>
+</head>
+
+<style>
+    #top_canvas{
+        visibility:hidden;
+    }
+
+    #health_label{
+        font-size: 1.5em;       
+    }
+
+    #health{
+        background-color:red;
+    }
+
+    #dollar{
+        margin-left:30px;
+
+    }
+
+    #money{
+        font-size: 2em;
+    }
+
+    #wave_info{
+        margin-left: 30px;
+        font-size: 1.2em;
+    }
+
+    #min{
+        color:red;
+    }
+
+    #gameWorld{
+        background:lightskyblue; 
+        float:left;
+        margin-top: 20px;
+    }
+
+    #towers_section{
+        float:left;
+        visibility:hidden;
+    }
+
+    #tools{
+        float:left;
+    }
+</style>
+    
+<body>
+    <div id="top_canvas">
+        <div id="health_label" style="display:inline-block">
+            <span>Castle's Health</span>
+            <progress id="health" value="100" max="100"></progress>
+        </div>
+        <div style="display:inline-block">
+            <img id="dollar"src="img/money.jpg" height="30">
+            <span id="money"></span><img src="img/money.jpg" height="30" style="margin-left:5px;">
+        </div>
+
+        <div id="wave_info" style="display:inline-block">
+            Next: <span id="wave"></span> In: <span id="min"></span> seconds            
+        </div>       
+       
+    </div>
+       
+    <div>
+        <canvas id="gameWorld" tabindex="1" width="800" height="800" style=""></canvas>
+
+        <div id="towers_section">
+            <h3 style="margin-left:100px; font-size:1.5em;">TOWERS</h3>
+            <div>
+                <!--input type="button" onclick="towerChosen = true;" value="Tower 1" style = "width: 100px; height: 100px; font-size: 1.2em;" /-->
+                <div style="float: left;">
+                    <input type="image" onclick="chooseTower = 1; destroy = null; " src="img/tower3.png" height="100" />
+                </div>
+                <div style="float: left;">
+                    <h4>Arrow tower</h4>
+                    Speed : 1 bullet / 0.4 second <br />
+                    Damage 1 <br />
+                    High Accuracy <br />
+                    Cost: $10
+                </div>
+            </div>
+            <div>
+                <!--input type="button" onclick="towerChosen = true;" value="Tower 1" style = "width: 100px; height: 100px; font-size: 1.2em;" /-->
+                <div style="float: left;">
+                    <input type="image" onclick="chooseTower = 2; destroy = null;" src="img/tower1.png" height="100" />
+                </div>
+                <div style="float: left;">
+                    <h4>Bullet tower</h4>
+                    Speed : 1 bullet / 0.2 second <br />
+                    Damage 1 <br />
+                    Low Accuracy <br />
+                    Cost: $12
+                </div>
+            </div>
+            <div>
+                <!--input type="button" onclick="towerChosen = true;" value="Tower 1" style = "width: 100px; height: 100px; font-size: 1.2em;" /-->
+                <div style="float: left;">
+                    <input type="image" onclick="chooseTower = 3; destroy = null;" src="img/tower2.png" height="100" />
+                </div>
+                <div style="float: left;">
+                    <h4>Missile tower</h4>
+                    Speed : 1 bullet / 5 seconds <br />
+                    Damage 40 <br />
+                    High Accuracy <br />
+                    Cost: $20
+                </div>
+            </div>
+
+            <div id="tools">            
+                <h4 style="margin-left:100px; font-size:1.5em;">TOOLS</h4>
+                <div style ="float: left;">
+                    <div style ="margin-left:20px;">
+                        <input type="image" onclick="destroy = 1; chooseTower = null;" src="img/axe.png" height="50" />
+                    </div>
+                    <div style="margin-left:20px;">
+                        <span style="font-size:1.5em; margin-bottom:5px;"><bold>Cut Tree</bold></span> <br />
+                        <p>Cost: $10</p>
+                    </div>
+                </div>
+                
+                <div style="float: left;">
+                    <div style="margin-left:60px;">
+                        <input type="image" onclick="destroy = 2; chooseTower = null;" src="img/destroy.jpg" height="50" />
+                    </div>
+                    <div style="margin-left:40px;">
+                        <span style="font-size:1.5em; margin-bottom:5px;"><bold>Destroy Tower</bold></span> <br />
+                        <p>Receive 75% of tower's cost</p>
+                    </div>
+                </div>
+                
+                <div >
+                    <input id="sound_setting" type="image" onclick="mute();" src="img/mute_sound_image.png" height="50" style="margin-left:20px; margin-top:40px;" />
+                </div> 
+                                
+            </div>
+            
+                        
+        </div>        
+    </div>
+
+</body>
+</html>
